@@ -31,7 +31,7 @@ function carregarApp() {
   Object.assign(window, {
     criarCliente: app.criarCliente, cadastrarPet: app.cadastrarPet, criarProduto: app.criarProduto,
     adicionarCarrinho: app.adicionarCarrinho, removerCarrinho: app.removerCarrinho,
-    finalizarCompra: app.finalizarCompra, nextSlide: app.nextSlide, prevSlide: app.prevSlide,
+    finalizarCompra: app.finalizarCompra, calcularTotal: app.calcularTotal, nextSlide: app.nextSlide, prevSlide: app.prevSlide,
   });
   return app;
 }

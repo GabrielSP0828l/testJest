@@ -11,12 +11,15 @@ let nome=clienteNome.value
 let email=clienteEmail.value
 let vip=clienteVip.checked
 
+nome=nome.trim()
+email=email.trim()
+
 if(nome==""){
 alert("Nome inválido")
 return
 }
 
-if(!email.includes("@")){
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
 alert("Email inválido")
 return
 }
@@ -31,11 +34,25 @@ function renderClientes(){
 
 listaClientes.innerHTML=""
 
-clientes.forEach(c=>{
+let selecionado=clienteSelect.value
+clienteSelect.innerHTML=""
+let visitante=document.createElement("option")
+visitante.value=""
+visitante.innerText="Sem cliente"
+clienteSelect.appendChild(visitante)
+
+clientes.forEach((c,i)=>{
 let li=document.createElement("li")
-li.innerText=c.nome+" - "+c.email
+li.innerText=c.nome+" - "+c.email+(c.vip?" (VIP)":"")
 listaClientes.appendChild(li)
+
+let op=document.createElement("option")
+op.value=i
+op.innerText=c.nome+(c.vip?" (VIP)":"")
+clienteSelect.appendChild(op)
 })
+
+clienteSelect.value=selecionado
 
 }
 
@@ -43,12 +60,23 @@ listaClientes.appendChild(li)
 
 function cadastrarPet(){
 
-let nome=petNome.value
-let tipo=petTipo.value
-let idade=parseInt(petIdade.value)
+let nome=petNome.value.trim()
+let tipo=petTipo.value.trim()
+let idadeTexto=petIdade.value.trim()
+let idade=Number(idadeTexto)
 
 if(nome==""){
 alert("Pet precisa de nome")
+return
+}
+
+if(tipo==""){
+alert("Pet precisa de tipo")
+return
+}
+
+if(idadeTexto=="" || !Number.isInteger(idade) || idade<0){
+alert("Idade inválida")
 return
 }
 
@@ -74,10 +102,15 @@ listaPets.appendChild(li)
 
 function criarProduto(){
 
-let nome=produtoNome.value
+let nome=produtoNome.value.trim()
 let preco=parseFloat(produtoPreco.value)
 
-if(preco<0){
+if(nome==""){
+alert("Nome do produto inválido")
+return
+}
+
+if(isNaN(preco) || preco<=0){
 alert("Preço inválido")
 return
 }
@@ -113,6 +146,16 @@ produtoSelect.appendChild(op)
 function adicionarCarrinho(){
 
 let p=produtos[produtoSelect.value]
+
+if(!p){
+alert("Selecione um produto")
+return
+}
+
+if(!(p.preco>0)){
+alert("Produto com preço inválido")
+return
+}
 
 carrinho.push(p)
 
@@ -156,9 +199,13 @@ total+=p.preco
 
 })
 
-if(total>100){
-total*=0.9
-}
+let cliente=clientes[clienteSelect.value]
+let desconto=0
+
+if(total>100) desconto=0.10
+if(cliente && cliente.vip) desconto=Math.max(desconto,0.15)
+
+total*=(1-desconto)
 
 total=total.toFixed(2)
 
@@ -180,6 +227,8 @@ renderCarrinho()
 
 }
 
+
+renderClientes()
 
 // CARROSSEL
 
